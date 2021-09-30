@@ -7,6 +7,7 @@
 const char ArrAlpha[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 const char Matrix_alphabet[4][7] = {{'a', 'b', 'c', 'd', 'e', 'f', 'g'},{'h', 'i', 'j', 'k', 'l', 'm', 'n'},{'o', 'p', 'q', 'r', 's', 't','u'},{'v', 'w', 'x', 'y', 'z','+','+'}};
 char Input_string[50];
+char Input_string_poly[250];
 int Arr_output_poly[100];
 char Output_string[50];
 
@@ -19,6 +20,8 @@ void cifrado_poly();
 void descifrado_poly();
 void show_matrix();
 bool validate_char(char letra);
+bool validate_number(char letra);
+void get_chart_poly(int val_i, int val_j);
 
 
 int main(){
@@ -67,12 +70,14 @@ int main(){
 				}else if (opc_intern == 'b')
 				{
 					printf("DESCIFRAR\n");
-					
+					show_matrix();
+					descifrado_poly();
 					vaciar_arr();
 				}
 				break;
 			}
 			case 3:{
+				get_chart_poly(1,1);
 				break;
 			}
 			case 4:{
@@ -97,7 +102,6 @@ void cifrado_poly(){
 	input_lengt_arr = strlen(Input_string);
 	if (DEBUG_)
 	{
-		printf("\tMensaje a crifrar ---> [ %s ]\n", Input_string);
 		printf("\tTAMANO DE ARRAY DE INPUT ---> [ %d ]\n", input_lengt_arr);
 	}
 	while(resultado == false && contador_validate < input_lengt_arr){
@@ -114,16 +118,87 @@ void cifrado_poly(){
 	}
 	if (resultado)
 	{
-		printf("\n\n\nERROR EL MENSAJE CONTIENE UN CARACTER NO VALIDO (ñ o Ñ)INTENTE DE NUEVO\n\n\n");
+		printf("\n\n\nERROR EL MENSAJE CONTIENE UN CARACTER NO VALIDO (ñ / Ñ / 0 ~ 9 )INTENTE DE NUEVO\n\n\n");
 	}else{
 		show_matrix();
-		printf("Mensaje encriptado: ");
+		printf("Mensaje a crifrar ---> [ %s ]\n", Input_string);
+		printf("Mensaje cifrado: ");
 		for (int i = 0; i < input_lengt_arr; i++)
 		{
 			get_pos_poly(Input_string[i]);
+			if(i+1 < input_lengt_arr){
+				printf(",");
+			}
 		}
 		printf("\n");		
 	}
+}
+
+void descifrado_poly(){
+	int pos_val = 0, contador_validate = 0, contador_pos_new_values = 0;
+	int input_lengt_arr = 0;
+	bool resultado = false;
+	int aux_val_1 = 0, aux_val_2 = 0;
+	printf("Ingrese la su mensaje cifrado: ");
+	scanf("%s", &Input_string_poly);
+	input_lengt_arr = strlen(Input_string_poly);
+	if (DEBUG_)
+	{
+		printf("\tTAMANO DE ARRAY DE INPUT ---> [ %d ]\n", input_lengt_arr);
+	}
+	while(resultado == false && contador_validate < input_lengt_arr){
+		if (DEBUG_)
+		{
+			printf("vuelta %d val [ %c || %d ]\n",contador_validate, Input_string_poly[contador_validate],Input_string_poly[contador_validate]);
+		}
+		resultado = validate_number(Input_string_poly[contador_validate]);
+		contador_validate++;
+	}
+	if (DEBUG_)
+	{
+		printf("True = 1 | False = 0 [ %d ] \n",resultado);
+	}
+	if (resultado)
+	{
+		printf("\n\n\nERROR EL MENSAJE CONTIENE UN CARACTER NO VALIDO (ñ o Ñ)INTENTE DE NUEVO\n\n\n");
+	}else{
+		printf("Mensaje desencriptado: ");
+		for (int i = 0; i < input_lengt_arr; i++)
+		{
+			if (DEBUG_)
+			{
+				printf("---> Pos [ %d ] Val [ %c ]\n",i,Input_string_poly[i]);
+			}
+			if (Input_string_poly[i] >= 49 && Input_string_poly[i] <= 57)
+			{
+				if (DEBUG_)
+				{
+					printf("\t-->> i [ %d ] ---> C [ %d ] ---->[ %c ] \n",i,contador_pos_new_values,Input_string_poly[i]);
+				}
+				if ((contador_pos_new_values % 2) == 0)
+				{
+					aux_val_1 = Input_string_poly[i] - '0';
+					if (DEBUG_)
+					{
+						printf("aux_val_1 %d [ %c ]\n",aux_val_1, Input_string_poly[i]);
+					}
+				}else{
+					aux_val_2 = Input_string_poly[i] - '0';
+					if (DEBUG_)
+					{
+						printf("aux_val_2 %d [ %c ]\n",aux_val_2, Input_string_poly[i]);;
+					}
+					get_chart_poly(aux_val_1,aux_val_2);
+				}
+				contador_pos_new_values++;
+			}
+		}
+		printf("\n");
+	}
+}
+
+void get_chart_poly(int val_i, int val_j){
+	printf("%c",Matrix_alphabet[val_i-1][val_j-1]);
 }
 
 void get_pos_poly(char value){
@@ -139,7 +214,7 @@ void get_pos_poly(char value){
 				{
 					printf("---> [ %c ]ENCONTRADO EN ---> [ %d ][ %d ]\n",value,i+1,j+1);
 				}
-				printf("(%d,%d) ",i+1,j+1);
+				printf("(%d,%d)",i+1,j+1);
 			}
 		}
 	}
@@ -298,4 +373,13 @@ bool validate_char(char letra){
 	}else{
 		return false;
 	}
+}
+
+bool validate_number(char letra){
+	if ( letra == ',' || (letra >= 40 && letra <= 41) || (letra >= 49 && letra <= 55))
+	{
+		return false;
+	}else{
+		return true;
+	}	
 }
