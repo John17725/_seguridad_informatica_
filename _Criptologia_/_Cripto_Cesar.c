@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#define DEBUG_ 0
+#define DEBUG_ 1
 
 const char ArrAlpha[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 const char Matrix_alphabet[4][7] = {{'a', 'b', 'c', 'd', 'e', 'f', 'g'},{'h', 'i', 'j', 'k', 'l', 'm', 'n'},{'o', 'p', 'q', 'r', 's', 't','u'},{'v', 'w', 'x', 'y', 'z','+','+'}};
@@ -18,6 +18,8 @@ void crifrado_cesar();
 void descifrado_cesar();
 void cifrado_poly();
 void descifrado_poly();
+void cifrado_trithe();
+void descifrado_trithe();
 void show_matrix();
 bool validate_char(char letra);
 bool validate_number(char letra);
@@ -39,8 +41,8 @@ int main(){
 		switch(opc){
 			case 1: {
 				printf("<<=======================  CIFRADO CESAR=========================>>\n");
-				printf("<<======================= a.- CIFRAR    =========================>>\n");
-				printf("<<======================= b.- DESCIFRAR =========================>>\n");
+				printf("<<----------------------- a.- CIFRAR    ------------------------->>\n");
+				printf("<<----------------------- b.- DESCIFRAR ------------------------->>\n");
 				printf("--->> Ingrese su opcion: ");
 				scanf("%s",&opc_intern);
 				if (opc_intern == 'a')
@@ -58,8 +60,8 @@ int main(){
 			}
 			case 2:{
 				printf("<<=======================  CIFRADO POLYBIUS =======================>>\n");
-				printf("<<======================= a.- CIFRAR    ===========================>>\n");
-				printf("<<======================= b.- DESCIFRAR ===========================>>\n");
+				printf("<<----------------------- a.- CIFRAR    ------------------------->>\n");
+				printf("<<----------------------- b.- DESCIFRAR ------------------------->>\n");
 				printf("--->> Ingrese su opcion: ");
 				scanf("%s",&opc_intern);
 				if (opc_intern == 'a')
@@ -77,7 +79,22 @@ int main(){
 				break;
 			}
 			case 3:{
-				get_chart_poly(1,1);
+				printf("<<=====================  CIFRADO TRITHEMIUS =======================>>\n");
+				printf("<<----------------------- a.- CIFRAR    ------------------------->>\n");
+				printf("<<----------------------- b.- DESCIFRAR ------------------------->>\n");
+				printf("--->> Ingrese su opcion: ");
+				scanf("%s",&opc_intern);
+				if (opc_intern == 'a')
+				{
+					printf("CIFRAR\n");
+					cifrado_trithe();
+					vaciar_arr();
+				}else if (opc_intern == 'b')
+				{
+					printf("DESCIFRAR\n");
+					descifrado_trithe();
+					vaciar_arr();
+				}
 				break;
 			}
 			case 4:{
@@ -93,8 +110,123 @@ int main(){
 	return 0;
 }
 
+void cifrado_trithe(){
+	int pos_val = 0, contador_validate = 0, input_lengt_arr = 0, Clave_espaciado = 0, aux_pos = 0, contador_pos_recorridas = 0;
+	int tmp_clave = 0;
+	bool resultado = false;
+	printf("Ingrese la su mensaje: ");
+	scanf("%s", &Input_string);
+	printf("Ingrese la Clave de espaciado: ");
+	scanf("%d", &Clave_espaciado);
+	int aux_clave = Clave_espaciado;
+
+	input_lengt_arr = strlen(Input_string);
+
+	if (DEBUG_)
+	{
+		printf("TAMANO DE ARRAY DE INPUT ---> %d \n", input_lengt_arr);
+		printf("CODIFICANDO\n");
+	}
+	while(resultado == false && contador_validate < input_lengt_arr){
+		if (DEBUG_)
+		{
+			printf("vuelta %d val %c\n",contador_validate, Input_string[contador_validate]);
+		}
+		resultado = validate_char(Input_string[contador_validate]);
+		contador_validate++;
+	}
+	if (DEBUG_)
+	{
+		printf("True = 1 | False = 0 [ %d ] \n",resultado);
+	}
+	if (resultado)
+	{
+		printf("\n\n\nERROR EL MENSAJE CONTIENE UN CARACTER NO VALIDO (ñ o Ñ)INTENTE DE NUEVO\n\n\n");
+	}else{
+		for (int i = 0; i < input_lengt_arr; i++)
+		{
+			printf("---> INICIO CLAVE: %d\n",Clave_espaciado);
+			pos_val = comparar(Input_string[i]);
+			int sum = pos_val + Clave_espaciado;
+			if (sum == 25)
+			{
+				Output_string[i] = ArrAlpha[25];
+			}else if (sum > 25)
+			{
+				int sum2 = 25 - pos_val;
+				aux_clave = Clave_espaciado - sum2;
+				if (DEBUG_)
+				{
+					printf("PARA EL 25 FALTAN %d POR LO QUE LA NUEVA CLAVE ES %d \n",sum2,aux_clave);
+				}
+				Output_string[i]=ArrAlpha[aux_clave-1];
+			}else{
+				Output_string[i]=ArrAlpha[pos_val+Clave_espaciado];
+			}
+		Clave_espaciado++;
+		printf("---> FIN CLAVE: %d\n",Clave_espaciado);
+		}
+		printf("Mensaje:[ %s ]\n", Input_string);
+		printf("Mensaje Descifrado: [ %s ]\n", Output_string);
+	}
+}
+
+void descifrado_trithe(){
+	int pos_val = 0, contador_validate = 0, input_lengt_arr = 0, Clave_espaciado = 0, aux_pos = 0, contador_pos_recorridas = 0;
+	int tmp_clave = 0;
+	bool resultado = false;
+	printf("Ingrese la su mensaje: ");
+	scanf("%s", &Input_string);
+	printf("Ingrese la Clave de espaciado: ");
+	scanf("%d", &Clave_espaciado);
+	int aux_clave = Clave_espaciado;
+
+	input_lengt_arr = strlen(Input_string);
+
+	if (DEBUG_)
+	{
+		printf("TAMANO DE ARRAY DE INPUT ---> %d \n", input_lengt_arr);
+		printf("CODIFICANDO\n");
+	}
+	while(resultado == false && contador_validate < input_lengt_arr){
+		if (DEBUG_)
+		{
+			printf("vuelta %d val %c\n",contador_validate, Input_string[contador_validate]);
+		}
+		resultado = validate_char(Input_string[contador_validate]);
+		contador_validate++;
+	}
+	if (DEBUG_)
+	{
+		printf("True = 1 | False = 0 [ %d ] \n",resultado);
+	}
+	if (resultado)
+	{
+		printf("\n\n\nERROR EL MENSAJE CONTIENE UN CARACTER NO VALIDO (ñ o Ñ)INTENTE DE NUEVO\n\n\n");
+	}else{
+		for (int i = 0; i < input_lengt_arr; i++)
+		{
+			pos_val = comparar(Input_string[i]);
+			int sum = pos_val - Clave_espaciado;
+			printf("TU QUIERES IR A %d\n",sum);
+			if (sum == 0)
+			{
+				Output_string[i] = ArrAlpha[0];
+			}else if (sum < 0)
+			{
+				Output_string[i]=ArrAlpha[26+sum];
+			}else{
+				Output_string[i] = ArrAlpha[pos_val-Clave_espaciado];
+			}
+			Clave_espaciado++;
+		}
+		printf("Mensaje:[ %s ]\n", Input_string);
+		printf("Mensaje Descifrado: [ %s ]\n", Output_string);
+	}
+}
+
 void cifrado_poly(){
-	int pos_val = 0, contador_validate = 0;
+	int contador_validate = 0;
 	int input_lengt_arr = 0;
 	bool resultado = false;
 	printf("Ingrese la su mensaje: ");
@@ -135,7 +267,7 @@ void cifrado_poly(){
 }
 
 void descifrado_poly(){
-	int pos_val = 0, contador_validate = 0, contador_pos_new_values = 0;
+	int contador_validate = 0, contador_pos_new_values = 0;
 	int input_lengt_arr = 0;
 	bool resultado = false;
 	int aux_val_1 = 0, aux_val_2 = 0;
@@ -202,8 +334,6 @@ void get_chart_poly(int val_i, int val_j){
 }
 
 void get_pos_poly(char value){
-	int aux_pos = 0;
-	char val;
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 7; ++j)
@@ -233,6 +363,7 @@ void show_matrix(){
 
 void descifrado_cesar(){
 	int pos_val = 0, contador_validate = 0, input_lengt_arr = 0, Clave_espaciado = 0, aux_pos = 0, contador_pos_recorridas = 0;
+	int tmp_clave = 0;
 	bool resultado = false;
 	printf("Ingrese la su mensaje: ");
 	scanf("%s", &Input_string);
@@ -266,34 +397,19 @@ void descifrado_cesar(){
 		for (int i = 0; i < input_lengt_arr; i++)
 		{
 			pos_val = comparar(Input_string[i]);
-			Clave_espaciado = aux_clave;
-			int resultado = pos_val - Clave_espaciado;
-			aux_pos = pos_val;
-			if (pos_val < aux_clave)
+			int sum = pos_val - Clave_espaciado;
+			printf("TU QUIERES IR A %d\n",sum);
+			if (sum == 0)
 			{
-				while(aux_pos > 0){
-					aux_pos--;
-					contador_pos_recorridas++;
-				}
-				aux_clave = pos_val - contador_pos_recorridas;
-				if (aux_clave == 0)
-				{
-					pos_val = 25;
-					int tmp_clave = Clave_espaciado;
-					Clave_espaciado = aux_clave;
-					aux_clave = tmp_clave;
-				}
-				if (DEBUG_)
-				{
-					printf("POSICIONES RECORRIDAS ANTES DEL 0 %d y el auxiliar de la posicion vale %d y la nueva posicion a regresar es: %d \n", contador_pos_recorridas, aux_pos, aux_clave);
-				}
+				Output_string[i] = ArrAlpha[0];
+			}else if (sum < 0)
+			{
+				Output_string[i]=ArrAlpha[26+sum];
+			}else{
+				Output_string[i] = ArrAlpha[pos_val-Clave_espaciado];
+			}
 
-			}
-			Output_string[i] = ArrAlpha[pos_val-Clave_espaciado];
-			if (DEBUG_)
-			{
-				printf("===>> [ %d ] [ %c ]\n", pos_val, Output_string[i]);	
-			}
+
 		}
 		printf("Mensaje:[ %s ]\n", Input_string);
 		printf("Mensaje Descifrado: [ %s ]\n", Output_string);
@@ -301,15 +417,22 @@ void descifrado_cesar(){
 }
 
 void crifrado_cesar(){
-	int pos_val = 0, input_lengt_arr = 0, Clave_espaciado = 0, contador_validate = 0;
+	int pos_val = 0, contador_validate = 0, input_lengt_arr = 0, Clave_espaciado = 0, aux_pos = 0, contador_pos_recorridas = 0;
+	int tmp_clave = 0;
 	bool resultado = false;
 	printf("Ingrese la su mensaje: ");
 	scanf("%s", &Input_string);
 	printf("Ingrese la Clave de espaciado: ");
 	scanf("%d", &Clave_espaciado);
-	
+	int aux_clave = Clave_espaciado;
+
 	input_lengt_arr = strlen(Input_string);
-	printf("TAMANO DE ARRAY DE INPUT ---> %d \n", input_lengt_arr);
+
+	if (DEBUG_)
+	{
+		printf("TAMANO DE ARRAY DE INPUT ---> %d \n", input_lengt_arr);
+		printf("CODIFICANDO\n");
+	}
 	while(resultado == false && contador_validate < input_lengt_arr){
 		if (DEBUG_)
 		{
@@ -325,45 +448,49 @@ void crifrado_cesar(){
 	if (resultado)
 	{
 		printf("\n\n\nERROR EL MENSAJE CONTIENE UN CARACTER NO VALIDO (ñ o Ñ)INTENTE DE NUEVO\n\n\n");
-	}else{	
-		printf("CODIFICANDO\n");
-
+	}else{
 		for (int i = 0; i < input_lengt_arr; i++)
 		{
 			pos_val = comparar(Input_string[i]);
-			Output_string[i] = ArrAlpha[pos_val+Clave_espaciado];
-			printf("===>> [ %d ] [ %c ]\n", pos_val, Output_string[i]);	
+			int sum = pos_val + Clave_espaciado;
+			if (sum == 25)
+			{
+				Output_string[i] = ArrAlpha[25];
+			}else if (sum > 25)
+			{
+				int sum2 = 25 - pos_val;
+				aux_clave = Clave_espaciado - sum2;
+				if (DEBUG_)
+				{
+					printf("PARA EL 25 FALTAN %d POR LO QUE LA NUEVA CLAVE ES %d \n",sum2,aux_clave);
+				}
+				Output_string[i]=ArrAlpha[aux_clave-1];
+			}else{
+				Output_string[i]=ArrAlpha[pos_val+Clave_espaciado];
+			}
+
+
 		}
-		
 		printf("Mensaje:[ %s ]\n", Input_string);
-		printf("Mensaje Cifrado: [ %s ]\n", Output_string);
+		printf("Mensaje Descifrado: [ %s ]\n", Output_string);
 	}
 }
 
 int comparar(char b){
-	char aux_a;
-	char aux_b = b;
-	int contador = 0;
-	aux_a = ArrAlpha[contador];
-	while(aux_a != aux_b){
-		contador++;
-		aux_a = ArrAlpha[contador];
-	}
-	if (DEBUG_)
+	for (int i = 0; i <= 25; i++)
 	{
-		printf("POS ---> [ %d ] VAL ---> [ %c ]\n",contador, aux_a);
-	}
-	if (contador == 25)
-	{
-		return -1;
-	}else {
-		return contador;
+		if (ArrAlpha[i] == b)
+		{
+			printf("[ %c ]ENCONTRADO pos [ %d ] val [ %c ]\n",b,i,ArrAlpha[i]);
+			return i;
+		}
 	}
 }
 
 void vaciar_arr(){
-	memset(Input_string, 0, 50 * (sizeof Input_string[0]) );
-	memset(Output_string, 0, 50 * (sizeof Output_string[0]) );
+	memset(Input_string, 0, 50 * (sizeof Input_string[0]));
+	memset(Output_string, 0, 50 * (sizeof Output_string[0]));
+	memset(Input_string_poly, 0, 50 * (sizeof Input_string_poly[0]));
 }
 
 bool validate_char(char letra){
