@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "nodemon": "^2.0.15",
+    "prompt-sync": "^4.2.0"
+  },
+  "name": "_seguridad_js",
+  "version": "1.0.0",
+  "main": "main.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
